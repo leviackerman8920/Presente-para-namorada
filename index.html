@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Contagem Regressiva 💖</title>
+    <style>
+        body {
+            background: #ffeef0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-size: 1.2em; /* juntando ajuste */
+        }
+        .heart {
+            cursor: pointer;
+            transition: transform 0.2s;
+            z-index: 10;
+            margin-top: 40px;
+        }
+        .heart:hover {
+            transform: scale(1.15);
+        }
+        .carta {
+            display: none;
+            background: #fff;
+            padding: 30px 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px #c9184a33;
+            max-width: 320px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #d90429;
+            margin: 30px 0 0 0;
+            animation: fadeIn 1s;
+            z-index: 10;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .caindo {
+            position: fixed;
+            top: -40px;
+            width: 32px;
+            height: 32px;
+            pointer-events: none;
+            z-index: 1;
+            animation: cair 5s linear infinite;
+            text-align: center;
+            font-size: 32px;
+        }
+        @keyframes cair {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+        .pergunta {
+            display: none;
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #a4133c;
+            text-align: center;
+            background: #fff0;
+        }
+        .botoes {
+            display: none;
+            flex-direction: row;
+            gap: 24px;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+        .botoes button {
+            padding: 12px 34px;
+            background: #e63946;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            position: relative;
+        }
+        .botoes button:active {
+            transform: scale(0.97);
+        }
+        .botoes button:hover {
+            background: #d90429;
+        }
+        .fugir-direita {
+            animation: direita 0.6s forwards;
+        }
+        .fugir-esquerda {
+            animation: esquerda 0.6s forwards;
+        }
+        .fugir-fora {
+            animation: fora 0.8s forwards;
+        }
+        @keyframes direita {
+            to { transform: translateX(120px); }
+        }
+        @keyframes esquerda {
+            to { transform: translateX(-120px); }
+        }
+        @keyframes fora {
+            to { transform: translateY(-60px) translateX(500px) scale(0.6) rotate(40deg); opacity: 0; }
+        }
+        /* Caixa contagem regressiva */
+        .box-contagem {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            left: 50%;
+            top: 52%;
+            transform: translate(-50%,-50%);
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px #c9184a44;
+            padding: 38px 30px;
+            min-width: 220px;
+            min-height: 180px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            animation: fadeInBox 0.8s forwards;
+        }
+        @keyframes fadeInBox {
+            from { opacity: 0; transform: translate(-50%,-50%) scale(0.8);}
+            to   { opacity: 1; transform: translate(-50%,-50%) scale(1);}
+        }
+        .contagem-titulo {
+            font-size: 1.2em;
+            color: #a4133c;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .contagem-numeros {
+            font-size: 2em;
+            color: #7c3aed;
+            letter-spacing: 2px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .contagem-label {
+            font-size: 1em;
+            color: #444;
+            text-align: center;
+        }
+
+        /* Media query para celular */
+        @media (max-width: 600px) {
+            body {
+                font-size: 1.4em;
+            }
+            h1, h2, h3 {
+                font-size: 2em;
+            }
+            button, input {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Coração -->
+    <div id="heart" class="heart">
+        <svg height="150" width="150" viewBox="0 0 100 100">
+            <path d="M10,30
+                     A20,20 0 0,1 50,30
+                     A20,20 0 0,1 90,30
+                     Q90,60 50,90
+                     Q10,60 10,30 Z"
+                  fill="#e63946"/>
+        </svg>
+    </div>
+    <!-- Carta -->
+    <div class="carta" id="carta">
+        <strong>Para o amor da minha vida 💌</strong><br><br>
+        Você é meu motivo de sorrir todos os dias.<br>
+        Obrigado por ser tão especial.<br>
+        Te amo!
+    </div>
+    <!-- Frase e botões -->
+    <div class="pergunta" id="pergunta">você vai me amar para sempre?</div>
+    <div class="botoes" id="botoes">
+        <button id="btnSim">sim</button>
+        <button id="btnNao">não</button>
+    </div>
+    <!-- Caixa da contagem -->
+    <div id="boxContagem" style="display:none;">
+        <div class="box-contagem">
+            <div class="contagem-titulo">Contagem para <b>04/09/2026</b></div>
+            <div class="contagem-numeros" id="contagemNumeros">00d 00h 00m 00s</div>
+            <div class="contagem-label">No seu próximo aniversário a gente vai ficar grudados</div>
+        </div>
+    </div>
+    <script>
+        const heart = document.getElementById('heart');
+        const carta = document.getElementById('carta');
+        const pergunta = document.getElementById('pergunta');
+        const botoes = document.getElementById('botoes');
+        const btnSim = document.getElementById('btnSim');
+        const btnNao = document.getElementById('btnNao');
+        const boxContagem = document.getElementById('boxContagem');
+        const contagemNumeros = document.getElementById('contagemNumeros');
+
+        heart.onclick = () => {
+            carta.style.display = "block";
+            heart.style.display = "none";
+            pergunta.style.display = "block";
+            botoes.style.display = "flex";
+        };
+
+        btnNao.onclick = function() {
+            btnNao.classList.add('fugir-direita');
+            setTimeout(() => {
+                btnNao.classList.remove('fugir-direita');
+                btnNao.classList.add('fugir-esquerda');
+                setTimeout(() => {
+                    btnNao.classList.remove('fugir-esquerda');
+                    btnNao.classList.add('fugir-fora');
+                    setTimeout(() => {
+                        btnNao.style.display = 'none';
+                    }, 800);
+                }, 600);
+            }, 600);
+        };
+
+        // Função para atualizar contagem regressiva
+        function atualizarContagem() {
+            const alvo = new Date('2026-09-04T00:00:00');
+            const agora = new Date();
+            let diff = alvo.getTime() - agora.getTime();
+            if (diff < 0) diff = 0;
+            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const segs = Math.floor((diff % (1000 * 60)) / 1000);
+            contagemNumeros.textContent =
+                `${dias.toString().padStart(2,'0')}d ` +
+                `${horas.toString().padStart(2,'0')}h ` +
+                `${mins.toString().padStart(2,'0')}m ` +
+                `${segs.toString().padStart(2,'0')}s`;
+        }
+
+        btnSim.onclick = function() {
+            boxContagem.style.display = "block";
+            atualizarContagem();
+            boxContagem.querySelector('.box-contagem').style.pointerEvents = "auto";
+            setInterval(atualizarContagem, 1000);
+        };
+
+        // Elementos caindo
+        function criarElementoCaindo() {
+            const elem = document.createElement("div");
+            elem.classList.add("caindo");
+            const tipos = [
+                `<svg width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="6" fill="#ffe066"/><g>
+                <ellipse cx="16" cy="6" rx="3" ry="8" fill="#fff"/><ellipse cx="16" cy="26" rx="3" ry="8" fill="#fff"/>
+                <ellipse cx="6" cy="16" rx="8" ry="3" fill="#fff"/><ellipse cx="26" cy="16" rx="8" ry="3" fill="#fff"/>
+                <ellipse cx="10" cy="10" rx="2" ry="6" fill="#fff"/><ellipse cx="22" cy="22" rx="2" ry="6" fill="#fff"/>
+                <ellipse cx="10" cy="22" rx="6" ry="2" fill="#fff"/><ellipse cx="22" cy="10" rx="6" ry="2" fill="#fff"/>
+                </g></svg>`,
+                `<svg width="32" height="32" viewBox="0 0 32 32">
+                <polygon points="16,4 20,12 29,12 22,18 25,27 16,22 7,27 10,18 3,12 12,12"
+                fill="#ffe066" stroke="#fff" stroke-width="1"/>
+                </svg>`,
+                `❤️`,
+                `⭐`
+            ];
+            const tipoEscolhido = tipos[Math.floor(Math.random() * tipos.length)];
+            if (tipoEscolhido.startsWith('<svg')) {
+                elem.innerHTML = tipoEscolhido;
+            } else {
+                elem.textContent = tipoEscolhido;
+            }
+            elem.style.left = Math.random() * (window.innerWidth - 32) + "px";
+            elem.style.animationDuration = (3 + Math.random() * 3) + "s";
+            elem.style.opacity = 0.7 + Math.random() * 0.3;
+            document.body.appendChild(elem);
+            setTimeout(() => elem.remove(), 6000);
+        }
+        setInterval(criarElementoCaindo, 330);
+    </script>
+</body>
+</html>
